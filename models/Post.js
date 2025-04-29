@@ -8,7 +8,8 @@ const postSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: true
+    required:true
+    
   },
   profilePic: {
     type: String, // just storing URL or path to profile pic
@@ -19,7 +20,8 @@ const postSchema = new mongoose.Schema({
     required: true
   },
   image: {
-    type: String // URL or base64 string
+   type: String, 
+    required:true// URL or base64 string
   },
   upvotes: {
     type: Number,

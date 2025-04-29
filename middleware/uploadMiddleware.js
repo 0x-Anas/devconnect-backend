@@ -4,7 +4,7 @@ const path=require('path')
 //storage configuration
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
-        cb(null,'uploads/')  //save it in this folder
+        cb(null,'public/uploads/')  //save it in this folder
     },
     filename:(req,file,cb)=>{
         cb(null,Date.now()+path.extname(file.originalname));

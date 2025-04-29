@@ -1,23 +1,39 @@
 const Post=require('../models/Post')
+const Users=require('../models/Users')
 
 
 
   const createPost=async (req,res)=>{
+    console.log(req.body); // Check if the title and username are correctly passed
+    console.log(req.file); // Check if the file is being received by multer
     try{
-        const {title,image,profilePic,username}=req.body;
+        const {title,profilePic}=req.body;
+        const image = req.file ? `/uploads/${req.file.filename.replace(/\\/g, '/')}` : null;
+
+
+        if(!title||!image){
+            return res.status(400).json({message:'title and images are required'})
+        }
+
+        const user = await Users.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
 
         const newPost=new Post({
             user: req.userId, // we'll extract this from middleware (JWT)
             title,
-            image,
+            image:'/uploads/' + req.file.filename,
             profilePic,
-            username,
+            username:user.username,
         });
 
         const savedPost=await newPost.save();
 
         res.status(201).json(savedPost);
     }catch(error){
+        console.error('Error creating post:', error.message, error.stack);  
         res.status(500).json({ message: 'Something went wrong creating post' });
     }
     

@@ -1,0 +1,32 @@
+const mongoose=require('mongoose')
+
+const ProfileSchema=new mongoose.Schema({
+    user:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // assuming your auth model is named 'User'
+        required: true,
+        unique: true,
+    },
+    bio:{
+        type:String
+    },
+    skills:{
+        type:[String],
+        default:[]
+    },
+    linkedin: {
+        type: String,
+      },
+      website: {
+        type: String,
+      },
+      location: {
+        type: String,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+})
+
+module.exports=mongoose.model('Profile',ProfileSchema)
