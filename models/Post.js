@@ -1,4 +1,22 @@
+// models/Post.js
+
 const mongoose = require('mongoose');
+
+// Create a separate schema for comments
+const commentSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true
+  },
+  text: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
 const postSchema = new mongoose.Schema({
   user: {
@@ -8,11 +26,10 @@ const postSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required:true
-    
+    required: true
   },
   profilePic: {
-    type: String, // just storing URL or path to profile pic
+    type: String,
     default: "https://via.placeholder.com/40"
   },
   title: {
@@ -20,8 +37,8 @@ const postSchema = new mongoose.Schema({
     required: true
   },
   image: {
-   type: String, 
-    required:true// URL or base64 string
+    type: String,
+    required: true
   },
   upvotes: {
     type: Number,
@@ -31,10 +48,8 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  comments: {
-    type: Number,
-    default: 0
-  }
+  comments: [commentSchema]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Post', postSchema);
+

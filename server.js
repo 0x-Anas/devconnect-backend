@@ -17,13 +17,12 @@ app.use(express.json()); // Parse incoming JSON requests
 
 // Routes
 app.use("/api/auth", authRoutes); // Public (register/login)
-app.use('/api/posts', authMiddleware, postRoutes); // Protected
+app.use('/api/posts', postRoutes); //partially protected in postRoutes.jsx
 app.use('/api/profile', authMiddleware, profileRoutes); // Protected
 
 // Serve static files from 'public/uploads' directory
-const uploadsPath = path.join(__dirname, 'public', 'uploads');
-console.log('Uploads folder is located at:', uploadsPath);
-app.use('/uploads', express.static(uploadsPath));
+app.use('/uploads', express.static('uploads'));
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
