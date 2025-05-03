@@ -7,12 +7,12 @@ const Users=require('../models/Users')
     console.log(req.body); // Check if the title and username are correctly passed
     console.log(req.file); // Check if the file is being received by multer
     try{
-        const {title,profilePic}=req.body;
+        const {title,content,profilePic}=req.body;
         const image = req.file ? `/uploads/${req.file.filename.replace(/\\/g, '/')}` : null;
 
 
-        if(!title||!image){
-            return res.status(400).json({message:'title and images are required'})
+        if(!title||!content||!image){
+            return res.status(400).json({message:'title,content, images are required'})
         }
 
         const user = await Users.findById(req.userId);
@@ -24,6 +24,7 @@ const Users=require('../models/Users')
         const newPost=new Post({
             user: req.userId, // we'll extract this from middleware (JWT)
             title,
+            content,
             image:'/uploads/' + req.file.filename,
             profilePic,
             username:user.username,
