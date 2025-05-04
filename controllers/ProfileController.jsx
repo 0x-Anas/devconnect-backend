@@ -3,7 +3,7 @@ const Profile=require('../models/Profile')
 //to fetch users profile
 const getMyProfile=async(req,res)=>{
     try{
-        const profile=await Profile.findOne({user:req.user.id}).populate('user', 'username profilePic');
+        const profile=await Profile.findOne({user:req.userId}).populate('user', 'username profilePic');
         if(!profile){
             res.status(404).json({message:'profile not found'})
         }
@@ -30,7 +30,7 @@ const createOrUpdateProfile=async(req,res)=>{
     }
     try{
 
-        let profile = await Profile.findOne({ user: req.user.id });
+        let profile = await Profile.findOne({ user: req.userId });
         if (profile) {
             profile = await Profile.findOneAndUpdate(
               { user: req.user.id },

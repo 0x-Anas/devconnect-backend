@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
     const decoded = JWT.verify(token, process.env.JWT_SECRET);
     
     // ✅ Fix: use `req.user` with `id`, to match your route file
-    req.user = { id: decoded.id };
+    req.userId = decoded.id; 
 
     next();
   } catch (err) {

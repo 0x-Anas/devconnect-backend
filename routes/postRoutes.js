@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPost, getAllPost } = require('../controllers/postController');
+const { createPost, getAllPost,DeletePost } = require('../controllers/postController');
 const authMiddleware = require('../middleware/authMiddleware');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // Use the multer configuration from postController
@@ -9,6 +9,8 @@ const router = express.Router();
 
 // Protect the route with auth middleware
 router.post('/create', authMiddleware, upload.single('image'), createPost);
+
+router.delete("/:postId",authMiddleware,DeletePost)//handling delete function
 
 router.post('/:postId/comment',async(req,res)=>{
     const{postId}=req.params;

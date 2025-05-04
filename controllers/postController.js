@@ -2,7 +2,7 @@ const Post=require('../models/Post')
 const Users=require('../models/Users')
 
 
-
+//for creating post
   const createPost=async (req,res)=>{
     console.log(req.body); // Check if the title and username are correctly passed
     console.log(req.file); // Check if the file is being received by multer
@@ -39,7 +39,31 @@ const Users=require('../models/Users')
     }
     
 }
+//for deleting post
 
+const DeletePost=async(req,res)=>{
+    try{
+        const { postId } = req.params;
+        const post=await Post.findById(postId);
+
+        if(!post){
+            return res.status(404).json({message:'post not found'});
+        }
+
+        if (post.author.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Unauthorized to delete this post" });
+          }
+
+          await post.deleteOne();
+          res.status(200).json({message:'post deleted successfully'})
+    }catch(err){
+        console.error("Error deleting post:", error.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
+
+}
+
+//for fetching all posts 
 const getAllPost=async(req,res)=>{
     try{
         const posts=await Post.find()
@@ -52,4 +76,4 @@ const getAllPost=async(req,res)=>{
         res.status(500).json({message:'server error while fetching'});
     }
 }
-module.exports={createPost,getAllPost};
+module.exports={createPost,getAllPost,DeletePost};
