@@ -26,28 +26,47 @@ exports.register=async(req,res)=>{
 }};
 
 //login
-exports.login=async(req,res)=>{
-    try{
-        const {email,password}=req.body;
-        const user=await User.findOne({email});
-
-        if(!user){
-            return res.status(400).json({ message: "Invalid email or password" });
+exports.login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(400).json({ message: "Invalid email or password" });
+      }
+  
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid email or password" });
+      }
+  
+      const token = JWT.sign(
+        {
+          id: user._id,
+          username: user.username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
         }
-
-        //compare password
-        const isMatch=await bcrypt.compare(password,user.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });
-
-        //create token
-        const token=JWT.sign({
-            id:user._id,
-            username:user.username
-        },process.env.JWT_SECRET,{
-            expiresIn:"1h"
-        });
-        res.status(200).json({token,message:'Login successful ✅'});
-    }catch(err){
-        res.status(500).json({message:"Server error while logging in 😓",error:err});
+      );
+  
+      // 🛠️ Send back user info along with token
+      res.status(200).json({
+        token,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          // Add other fields if needed
+        },
+        message: "Login successful ✅",
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "Server error while logging in 😓",
+        error: err.message,
+      });
     }
-}
+  };
+  

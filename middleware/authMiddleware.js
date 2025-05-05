@@ -12,7 +12,7 @@ const authMiddleware = async (req, res, next) => {
   try {
     const decoded = JWT.verify(token, process.env.JWT_SECRET);
     
-    // ✅ Fix: use `req.user` with `id`, to match your route file
+    // extract the user id to send to frontend
     req.userId = decoded.id; 
 
     next();

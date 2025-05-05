@@ -41,39 +41,66 @@ const Users=require('../models/Users')
 }
 //for deleting post
 
-const DeletePost=async(req,res)=>{
-    try{
+const DeletePost = async (req, res) => {
+    try {
         const { postId } = req.params;
-        const post=await Post.findById(postId);
+        
+        console.log("[DEBUG] Delete Request - Auth Info:", {
+            userIdFromAuth: req.userId,  // From your auth middleware
+            userObject: req.user         // Might be undefined
+        });
 
-        if(!post){
-            return res.status(404).json({message:'post not found'});
+        const post = await Post.findById(postId);
+        
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
         }
 
-        if (post.author.toString() !== req.user.id) {
-            return res.status(403).json({ message: "Unauthorized to delete this post" });
-          }
+        // FIX: Use req.userId instead of req.user.id
+        if (post.user.toString() !== req.userId) {
+            return res.status(403).json({ 
+                message: "Unauthorized to delete this post",
+                details: {
+                    postOwner: post.user.toString(),
+                    requestingUser: req.userId
+                }
+            });
+        }
 
-          await post.deleteOne();
-          res.status(200).json({message:'post deleted successfully'})
-    }catch(err){
-        console.error("Error deleting post:", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        await post.deleteOne();
+        res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error("Delete Error:", {
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message 
+        });
     }
+};
 
-}
+
 
 //for fetching all posts 
-const getAllPost=async(req,res)=>{
-    try{
-        const posts=await Post.find()
-        .populate('user','username profilePic')
+const getAllPost = async(req,res) => {
+    try {
+      const posts = await Post.find()
+        .populate('user', 'username profilePic _id') 
         .sort({createdAt:-1})
-
-        res.status(200).json(posts)
-    }catch(error){
-        console.error(error.message)
-        res.status(500).json({message:'server error while fetching'});
+        .lean(); // Convert to plain JS objects
+      
+     
+      const enhancedPosts = posts.map(post => ({
+        ...post,
+        userId: post.user?._id || null // Add userId while keeping user object
+      }));
+  
+      res.status(200).json(enhancedPosts);
+    } catch(error) {
+      console.error(error.message);
+      res.status(500).json({message:'server error while fetching'});
     }
-}
+  }
 module.exports={createPost,getAllPost,DeletePost};
