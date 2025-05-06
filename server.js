@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
+const cookieParser=require('cookie-parser');
 
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/postRoutes');
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(cors()); // Handle cross-origin requests
 app.use(express.json()); // Parse incoming JSON requests
+app.use(cookieParser()); //to read cookies efectively! 
 
 // Routes
 app.use("/api/auth", authRoutes); // Public (register/login)
