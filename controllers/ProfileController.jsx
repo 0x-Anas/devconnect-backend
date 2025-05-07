@@ -20,7 +20,7 @@ const createOrUpdateProfile=async(req,res)=>{
     const { bio, skills, github, linkedin, website, location } = req.body;
 
     const profileData={
-        user: req.user.id,
+        user: req.userId,
         bio,
         skills: skills?.split(',').map(s => s.trim()),
         github,
@@ -33,7 +33,7 @@ const createOrUpdateProfile=async(req,res)=>{
         let profile = await Profile.findOne({ user: req.userId });
         if (profile) {
             profile = await Profile.findOneAndUpdate(
-              { user: req.user.id },
+              { user: req.userId },
               { $set: profileData },
               { new: true }
             );

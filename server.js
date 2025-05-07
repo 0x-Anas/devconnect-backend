@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser=require('cookie-parser');
 
-const authRoutes = require('./routes/auth');
+const authRoutes=require('./routes/auth');
 const postRoutes = require('./routes/postRoutes');
 const profileRoutes = require('./routes/profile');
 const authMiddleware = require('./middleware/authMiddleware');
@@ -13,7 +13,15 @@ const authMiddleware = require('./middleware/authMiddleware');
 dotenv.config();
 const app = express();
 
-app.use(cors()); // Handle cross-origin requests
+//custom cors() for sharing cookiess
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+  exposedHeaders: ['set-cookie'] // 👈 Add this
+}));
+
+
+// Handle cross-origin requests
 app.use(express.json()); // Parse incoming JSON requests
 app.use(cookieParser()); //to read cookies efectively! 
 
