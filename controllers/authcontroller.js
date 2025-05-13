@@ -45,7 +45,7 @@ exports.login = async (req, res) => {
     const accessToken = JWT.sign(
       { id: user._id, username: user.username },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "10s" }
     );
 
     const refreshToken = JWT.sign(
@@ -61,10 +61,10 @@ exports.login = async (req, res) => {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false, // 🔒 set to true in production with HTTPS
-      sameSite: 'Lax',
-      path: '/api/auth/refresh', // restrict to refresh route
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: false,           // OK for localhost
+      sameSite: 'Lax',         // ✅ Use Lax for local dev!
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
     
 
@@ -85,6 +85,7 @@ exports.login = async (req, res) => {
 // =================== REFRESH TOKEN ===================
 exports.refreshToken = async (req, res) => {
   try {
+    console.log('All incoming cookies:', req.cookies);
     const token = req.cookies.refreshToken;
 
     console.log("👉 Refresh Token from Cookie:", token);

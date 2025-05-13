@@ -14,11 +14,20 @@ dotenv.config();
 const app = express();
 
 //custom cors() for sharing cookiess
+// Ensure your CORS middleware looks like this:
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5180",
   credentials: true,
-  exposedHeaders: ['set-cookie'] // 👈 Add this
+  exposedHeaders: ['set-cookie'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5180');
+  next();
+});
+
 
 
 // Handle cross-origin requests
