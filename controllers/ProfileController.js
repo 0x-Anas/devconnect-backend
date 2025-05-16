@@ -76,7 +76,7 @@ const uploadProfilePicture=async(req,res)=>{
         );
         res.status(200).json({
             message:'Profile picture updated',
-            profilePicture:user.profilePicture
+            avatar:user.profilePicture
         });
     }catch(err){
         console.error('error upload profile picture:',err)
