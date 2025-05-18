@@ -40,7 +40,9 @@ app.use('/api/posts', postRoutes); //partially protected in postRoutes.jsx
 app.use('/api/profile', authMiddleware, profileRoutes); // Protected
 
 // Serve static files from 'public/uploads' directory
-app.use('/uploads', express.static('uploads'));
+// Express backend example
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 // MongoDB connection
