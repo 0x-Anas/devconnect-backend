@@ -8,7 +8,14 @@ const getMyProfile=async(req,res)=>{
         if(!profile){
             res.status(404).json({message:'profile not found'})
         }
-        res.status(200).json(profile)
+
+         // Combine profile data with user's profile picture {now changed}
+        const response = {
+            ...profile._doc,
+            avatar: profile.user.profilePicture || null
+        };
+
+        res.status(200).json(response)
     }
     catch(error){
         console.error('error',error)
@@ -20,15 +27,23 @@ const getMyProfile=async(req,res)=>{
 const createOrUpdateProfile=async(req,res)=>{
     const { bio, skills, github, linkedin, website, location } = req.body;
 
-    const profileData={
+     // Handle skills input - accepts both string and array
+    let processedSkills = [];
+    if (typeof skills === 'string') {
+        processedSkills = skills.split(',').map(s => s.trim()).filter(s => s);
+    } else if (Array.isArray(skills)) {
+        processedSkills = skills.map(skill => typeof skill === 'string' ? skill.trim() : skill).filter(s => s);
+    }
+
+    const profileData = {
         user: req.userId,
         bio,
-        skills: skills?.split(',').map(s => s.trim()),
+        skills: processedSkills,
         github,
         linkedin,
         website,
         location
-    }
+    };
     try{
 
         let profile = await Profile.findOne({ user: req.userId });
@@ -43,7 +58,7 @@ const createOrUpdateProfile=async(req,res)=>{
 
         profile=new Profile(profileData)
         await profile.save();
-        return res.status(201).json(profile)
+         res.status(201).json(profile)
 }catch (error) {
     console.error('Error saving profile:', error.message);
     res.status(500).json({ message: 'Server error' });
