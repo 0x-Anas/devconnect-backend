@@ -4,7 +4,7 @@ const User=require('../models/Users')
 //to fetch users profile
 const getMyProfile=async(req,res)=>{
     try{
-        const profile=await Profile.findOne({user:req.userId}).populate('user', 'username profilePic');
+        const profile=await Profile.findOne({user:req.userId}).populate('user', 'username profilePicture');
         if(!profile){
             res.status(404).json({message:'profile not found'})
         }

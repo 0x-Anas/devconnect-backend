@@ -14,6 +14,9 @@ const ProfileSchema=new mongoose.Schema({
         type:[String],
         default:[]
     },
+    github:{
+      type:String,
+    },
     linkedin: {
         type: String,
       },
